@@ -8,6 +8,7 @@
 #include "input_box.cpp"
 #include<math.h>
 #include<sstream>
+#include "Spline.cpp"
 #include "mouse_to_window.cpp"
 
 using namespace std;
@@ -25,6 +26,8 @@ string stateLabel = "";
 string trLabel = "";
 bool state_input = false;
 bool tr_label_input = false;
+bool change_control_point = false;
+bool detect_drag = false;
 int transition_input = 0;
 float nx,ny;
 void display()
@@ -139,11 +142,18 @@ void display()
 			x1=t.n1.x+20;
 			x2=t.n2.x-20;
 		}
-		glBegin(GL_LINES);
-			glVertex3f(x1,GLfloat(t.n1.y),0);
-			glVertex3f(x2,GLfloat(t.n2.y),0);
-		glEnd();
-		// renderBitmapString(MOUSEx-6,MOUSEy-2,n.label,GLUT_BITMAP_HELVETICA_18);
+
+		spline(x1,t.n1.y,x2,t.n2.y,t.cx,t.cy);
+		string symbol = "";
+		for(int i = 0;i < t.label.size();i++){
+			symbol.append(t.label[i]);
+			symbol.append(",");
+			// cout<<"Actual"<<t.label[i];
+		}
+		symbol.pop_back();
+		cout<<endl<<symbol<<endl;
+		glColor3f(0, 0, 0);
+		renderBitmapString(t.cx,t.cy+10,symbol,GLUT_BITMAP_HELVETICA_18);
 	}
 	//Display input box to accept state name
 	if(state_input){
@@ -155,7 +165,6 @@ void display()
 	}
 	//Display input box to accept transition labels
 	if(tr_label_input){
-		cout<<"Box called"<<endl;
 		input_box();
 		glColor3f(1,1,1);
 		renderBitmapString(548,470,"Enter transition label",GLUT_BITMAP_HELVETICA_18);
@@ -164,14 +173,37 @@ void display()
 	}
 	glFlush();
 }
+//To detect drag
+void mouseDrag(int x,int y){
+	if(change_control_point && detect_drag){
+		GLdouble win[3];
+		convert(win, x, y);
+		transitions[transitions.size()-1].cx=win[0];
+		transitions[transitions.size()-1].cy=win[1];
+		display();
+		glColor3f(1, 0, 0);
+		glPointSize(5);
+		glBegin(GL_POINTS);
+			glVertex2f(transitions[transitions.size()-1].cx, transitions[transitions.size()-1].cy);
+		glEnd();
+		glPointSize(1);
+		glFlush();
+	}
+}
 
 void mouseDetect(int button,int state,int x,int y)
 {
+	//To see if drag should be performed or not
+	if(change_control_point == true && state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
+		detect_drag = true;
+	}else if(change_control_point == true && state == GLUT_UP && button == GLUT_LEFT_BUTTON){
+		detect_drag = false;
+	}
+
 	if(displayName)//To check if start button is pressed
 		if(x > 566 && x <675 && y > 341 && y < 386)
 		{
 			displayName = false;
-			cout<<"Start Pressed!!!"<<endl;
 		}
 
 	if(transition_input!=0 && state == GLUT_DOWN){
@@ -185,7 +217,7 @@ void mouseDetect(int button,int state,int x,int y)
 			node n = *i;
 
 			if(sqrt(pow(n.x-x,2)+pow(n.y-y,2))<=20){
-				cout<<"Inside"<<endl;
+				// cout<<"Inside"<<endl;
 				//Add node into tr_nodes
 				tr_nodes[2-transition_input]=n;
 				transition_input--;
@@ -209,7 +241,7 @@ void mouseDetect(int button,int state,int x,int y)
 	if(createNode){
 		message="Message Box";
 		if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN && !(x>21 && x<168 && y>15 && y<52)){
-			cout<<"In create node"<<endl;
+			// cout<<"In create node"<<endl;
 
 			state_input  = true;
 			stateLabel = "";
@@ -229,16 +261,22 @@ void mouseDetect(int button,int state,int x,int y)
 		transition_input = 2;
 		display();
 	}
-	cout<<x<<" "<<y<<endl;
+	// cout<<x<<" "<<y<<endl;
 }
 
 void key(unsigned char key,int x,int y){
+	//To exit change transition onece enter is pressed
+	if(change_control_point && key == 13){
+		change_control_point=false;
+		message="";
+		display();
+	}
 
 	if(state_input == true){
-		cout<<"Key pressed : "<<key<<endl;
-		cout<<stateLabel<<endl;
+		// cout<<"Key pressed : "<<key<<endl;
+		// cout<<stateLabel<<endl;
 		if(key == 13 && stateLabel.compare("")){
-			cout<<"Key pressed : Enter"<<endl;
+			// cout<<"Key pressed : Enter"<<endl;
 			state_input = false;
 			nodes.push_back(node(nx,ny,string(stateLabel)));
 			display();
@@ -266,8 +304,10 @@ void key(unsigned char key,int x,int y){
 				tr_label.push_back(l);
 			}
 			transitions.push_back(transition(tr_nodes[0],tr_nodes[1],tr_label));
+			change_control_point = true;
+			message = "Click and drag mouse to change transition curve.Press enter if done.";
 			trLabel="";
-			message="";
+			tr_label.clear();//Remove all the elements
 			display();
 			return;
 		}
@@ -300,6 +340,7 @@ int main(int argc,char **argv)
 	glMatrixMode(GL_PROJECTION);
 	glOrtho(0,1314,0,744,-700,700);
 	glutMouseFunc(mouseDetect);
+	glutMotionFunc(mouseDrag);
 	glutKeyboardFunc(key);
 	glutMainLoop();
 }
