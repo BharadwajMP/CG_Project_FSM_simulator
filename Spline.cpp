@@ -75,7 +75,7 @@ void spline(GLfloat x1,GLfloat y1,GLfloat x2,GLfloat y2,GLfloat cx,GLfloat cy)
 					glRotatef(180, 0, 0, 1);
 				}
         glRotatef(atan(m)*180/3.14, 0, 0, 1);
-				cout<<"m = "<<m<<" angle = "<<atan(m)*180/3.14<<endl;
+				// cout<<"m = "<<m<<" angle = "<<atan(m)*180/3.14<<endl;
 				glTranslatef(-a.x , -a.y,0);
         glBegin(GL_TRIANGLES);
           //To calculate other points on the triangle

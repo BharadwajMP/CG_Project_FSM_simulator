@@ -1,6 +1,6 @@
 #include<iostream>
 #include<GL/glut.h>
-#include "Text/text.cpp"
+//#include "Text/text.cpp"
 #include "circle.cpp"
 #include "node.cpp"
 #include<vector>
@@ -10,7 +10,9 @@
 #include<sstream>
 #include "Spline.cpp"
 #include "mouse_to_window.cpp"
-
+#include "validate.cpp"
+// #include "display.cpp"
+#include "ext.cpp"
 using namespace std;
 
 vector<node> nodes;
@@ -24,158 +26,23 @@ bool createNode=false;
 string message="Message Box";
 string stateLabel = "";
 string trLabel = "";
+string testString="";
 bool state_input = false;
 bool tr_label_input = false;
+bool test_input=false;
 bool change_control_point = false;
 bool detect_drag = false;
 int transition_input = 0;
+bool valid=false;
 float nx,ny;
-void display()
-{
-	//To display title page
-	if(displayName)
-	{
-		//Background
-		glColor3f(0.184,0.31,0.31);
-		glBegin(GL_POLYGON);
-			glVertex2f(0,0);
-			glVertex2f(1314,0);
-			glVertex2f(1314,744);
-			glVertex2f(0,744);
-		glEnd();
 
-		//Strat button
-		glColor3f(0,0,0);
-		glBegin(GL_POLYGON);
-			glVertex2f(565,355);
-			glVertex2f(675,355);
-			glVertex2f(675,405);
-			glVertex2f(565,405);
-		glEnd();
-		//Project info
-		renderStrokeFontString(1500,1600,"FSM Simulator",4,1,0,0,0.3);
-		renderStrokeFontString(5400,1500,"Bharadwaj MP (1PE15CS037)",1,1,1,1,0.15);
-		renderStrokeFontString(5400,1300,"Harsha MS (1PE15CS057)",1,1,1,1,0.15);
-		renderStrokeFontString(3400,2180,"Start",1.2,0,1,0,0.17);
 
-		glFlush();
-		return;
-	}
-
-	//Menu bar
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(0.5,0.5,0.5);
-	glBegin(GL_POLYGON);
-		glVertex2f(0,744);
-		glVertex2f(0,744-50);
-		glVertex2f(1314,744-50);
-		glVertex2f(1314,744);
-	glEnd();
-
-	//Create node button
-	glColor3f(0.6999,0.6999,0.68);
-	glBegin(GL_POLYGON);
-		glVertex2f(15,744-8);
-		glVertex2f(15,744-43);
-		glVertex2f(130,744-43);
-		glVertex2f(130,744-8);
-	glEnd();
-
-	glColor3f(0,0,0);
-	renderBitmapString(20,744-33,"Create Node",GLUT_BITMAP_HELVETICA_18);
-	//transition=true;
-	glColor3f(0.6999,0.6999,0.68);
-	glBegin(GL_POLYGON);
-		glVertex2f(140,744-43);
-		glVertex2f(140,744-8);
-		glVertex2f(280,744-8);
-		glVertex2f(280,744-43);
-	glEnd();
-//	renderStrokeFontString(1650,6150,"Add Transition",3,0,0,0,0.1);
-	glColor3f(0,0,0);
-	renderBitmapString(150,744 - 33,"Add Transition",GLUT_BITMAP_HELVETICA_18);
-	//test=true;
-	glColor3f(0.6999,0.6999,0.68);
-	glBegin(GL_POLYGON);
-		glVertex2f(290,744-8);
-		glVertex2f(290,744-43);
-		glVertex2f(390,744-43);
-		glVertex2f(390,744-8);
-	glEnd();
-//	renderStrokeFontString(3450,6150,"Test FSM",3,0,0,0,0.1);
-	glColor3f(0,0,0);
-	renderBitmapString(300,744-33,"Test FSM",GLUT_BITMAP_HELVETICA_18);
-	glColor3f(0.5,0.5,0.5);
-	glBegin(GL_POLYGON);
-		glVertex2f(0,0);
-		glVertex2f(1350,0);
-		glVertex2f(1350,50);
-		glVertex2f(0,50);
-	glEnd();
-	glColor3f(0,0,0);
-	renderBitmapString(200,25,message,GLUT_BITMAP_HELVETICA_18);
-
-	//Display states
-	vector <node> :: iterator i;
-	for (i = nodes.begin(); i != nodes.end(); ++i){
-		node n=*i;
-		GLsizei MOUSEx=n.x;GLsizei MOUSEy=n.y;
-		drawCircle(MOUSEx,MOUSEy,20);
-		glColor3f(0,0,0);
-		renderBitmapString(MOUSEx-6,MOUSEy-2,n.label,GLUT_BITMAP_HELVETICA_18);
-
-	}
-	//Display transition lines
-	vector <transition> :: iterator j;
-	for (j = transitions.begin(); j != transitions.end(); ++j){
-		transition t=*j;
-		glColor3f(0,0,0);
-		//Draw transition lines
-		glLineWidth(2);
-		GLfloat x1,x2;
-		if(t.n1.x>t.n2.x){
-			x1=t.n1.x-20;
-			x2=t.n2.x+20;
-		}
-		else{
-			x1=t.n1.x+20;
-			x2=t.n2.x-20;
-		}
-
-		spline(x1,t.n1.y,x2,t.n2.y,t.cx,t.cy);
-		string symbol = "";
-		for(int i = 0;i < t.label.size();i++){
-			symbol.append(t.label[i]);
-			symbol.append(",");
-			// cout<<"Actual"<<t.label[i];
-		}
-		symbol.pop_back();
-		cout<<endl<<symbol<<endl;
-		glColor3f(0, 0, 0);
-		renderBitmapString(t.cx,t.cy+10,symbol,GLUT_BITMAP_HELVETICA_18);
-	}
-	//Display input box to accept state name
-	if(state_input){
-		input_box();
-		glColor3f(1,1,1);
-		renderBitmapString(560,470,"Enter state name",GLUT_BITMAP_HELVETICA_18);
-		glColor3f(0,0,0);
-		renderBitmapString(540,440,stateLabel,GLUT_BITMAP_HELVETICA_18);
-	}
-	//Display input box to accept transition labels
-	if(tr_label_input){
-		input_box();
-		glColor3f(1,1,1);
-		renderBitmapString(548,470,"Enter transition label",GLUT_BITMAP_HELVETICA_18);
-		glColor3f(0,0,0);
-		renderBitmapString(540,440,trLabel,GLUT_BITMAP_HELVETICA_18);
-	}
-	glFlush();
-}
 //To detect drag
-void mouseDrag(int x,int y){
-	if(change_control_point && detect_drag){
+
+void mouseDetect(int button,int state,int x,int y)
+{
+	//To see if drag should be performed or not
+	if(change_control_point == true && state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
 		GLdouble win[3];
 		convert(win, x, y);
 		transitions[transitions.size()-1].cx=win[0];
@@ -188,14 +55,6 @@ void mouseDrag(int x,int y){
 		glEnd();
 		glPointSize(1);
 		glFlush();
-	}
-}
-
-void mouseDetect(int button,int state,int x,int y)
-{
-	//To see if drag should be performed or not
-	if(change_control_point == true && state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
-		detect_drag = true;
 	}else if(change_control_point == true && state == GLUT_UP && button == GLUT_LEFT_BUTTON){
 		detect_drag = false;
 	}
@@ -261,7 +120,14 @@ void mouseDetect(int button,int state,int x,int y)
 		transition_input = 2;
 		display();
 	}
-	// cout<<x<<" "<<y<<endl;
+	//cout<<x<<" "<<y<<endl;
+	//Test FSM Clicked
+	if(x > 303 && x < 404 && y > 11 && y < 42){
+		//cout<<"Test FSM clicked"<<endl;
+		test_input=true;
+		display();
+
+	}
 }
 
 void key(unsigned char key,int x,int y){
@@ -278,7 +144,8 @@ void key(unsigned char key,int x,int y){
 		if(key == 13 && stateLabel.compare("")){
 			// cout<<"Key pressed : Enter"<<endl;
 			state_input = false;
-			nodes.push_back(node(nx,ny,string(stateLabel)));
+			GLfloat color[]={90.0/255.0, 142.0/255, 244.0/255.0};
+			nodes.push_back(node(nx,ny,string(stateLabel),color));
 			display();
 			return;
 		}
@@ -323,6 +190,29 @@ void key(unsigned char key,int x,int y){
 			display();
 		}
 	}
+
+	if(test_input){
+		// cout<<"Key pressed : "<<key<<endl;
+		// cout<<stateLabel<<endl;
+		if(key == 13 && testString.compare("")){
+			// cout<<"Key pressed : Enter"<<endl;
+			test_input = false;
+			validate(nodes,transitions,testString);
+			display();
+			return;
+		}
+		if(key == 8)
+			{
+				if(testString.length() != 0)
+					testString.pop_back();
+				display();
+			}
+		else{
+			if(key != 13)//Only if enter key is not pressed
+				testString.append(string(&key,&key+1));
+			display();
+		}
+	}
 }
 
 
@@ -335,12 +225,14 @@ int main(int argc,char **argv)
 	glutInitWindowPosition(0,0);
 	glutCreateWindow("FSM Simulator");
 	glClear(GL_COLOR_BUFFER_BIT);
+	//glEnable(GL_COLOR_MATERIAL);
 	glClearColor(1,1,1,1);
 	glutDisplayFunc(display);
 	glMatrixMode(GL_PROJECTION);
 	glOrtho(0,1314,0,744,-700,700);
 	glutMouseFunc(mouseDetect);
-	glutMotionFunc(mouseDrag);
+	// glutMotionFunc(mouseDrag);
 	glutKeyboardFunc(key);
 	glutMainLoop();
+
 }

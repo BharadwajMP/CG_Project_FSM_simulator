@@ -1,4 +1,5 @@
 #include <GL/glut.h>
+#include "Text/text.cpp"
 
 void input_box(){
   //Dialog box
