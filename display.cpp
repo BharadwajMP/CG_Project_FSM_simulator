@@ -89,15 +89,30 @@ void display()
 
 	//Display states
 	vector <node> :: iterator i;
+	int z=-1;
+	if(flag!=-1){//Change color of selected node
+		// cout<<"While redraw"<<endl;
+		nodes[flag].color[0]=0;
+		nodes[flag].color[1]=255.0/255.0;
+		nodes[flag].color[2]=255.0/255.0;
+	}
 	for (i = nodes.begin(); i != nodes.end(); ++i){
 		node n=*i;
+		z++;
 		GLsizei MOUSEx=n.x;GLsizei MOUSEy=n.y;
 		//GLfloat color[]={90.0/255.0, 142.0/255, 244.0/255.0};
-		
+
+			// cout<<"Color : "<<z<<" "<<n.color[0]<<n.color[1]<<n.color[2]<<endl;
 		drawCircle(MOUSEx,MOUSEy,20,n.color);
 		glColor3f(0,0,0);
 		renderBitmapString(MOUSEx-6,MOUSEy-2,n.label,GLUT_BITMAP_HELVETICA_18);
 
+	}
+
+	if(flag!=-1){
+		nodes[flag].color[0]=90.0/255.0;//Reset color
+		nodes[flag].color[1]=142.0/255;
+		nodes[flag].color[2]=244.0/255.0;
 	}
 	//Display transition lines
 	vector <transition> :: iterator j;
@@ -107,16 +122,16 @@ void display()
 		//Draw transition lines
 		glLineWidth(2);
 		GLfloat x1,x2;
-		if(t.n1.x>t.n2.x){
-			x1=t.n1.x-20;
-			x2=t.n2.x+20;
+		if(nodes[t.n1].x>nodes[t.n2].x){
+			x1=nodes[t.n1].x-20;
+			x2=nodes[t.n2].x+20;
 		}
 		else{
-			x1=t.n1.x+20;
-			x2=t.n2.x-20;
+			x1=nodes[t.n1].x+20;
+			x2=nodes[t.n2].x-20;
 		}
 
-		spline(x1,t.n1.y,x2,t.n2.y,t.cx,t.cy);
+		spline(x1,nodes[t.n1].y,x2,nodes[t.n2].y,t.cx,t.cy);
 		string symbol = "";
 		for(int i = 0;i < t.label.size();i++){
 			symbol.append(t.label[i]);

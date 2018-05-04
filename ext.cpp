@@ -1,7 +1,6 @@
 extern vector<node> nodes;
 extern vector<transition> transitions;
 extern vector<string> tr_label;
-extern node tr_nodes[2];
 extern int size ;
 extern int check;
 extern bool displayName ;
@@ -18,3 +17,4 @@ extern bool detect_drag ;
 extern int transition_input;
 extern bool valid;
 extern float nx,ny;
+extern int flag;

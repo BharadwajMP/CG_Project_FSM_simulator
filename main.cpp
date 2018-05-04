@@ -3,6 +3,7 @@
 //#include "Text/text.cpp"
 #include "circle.cpp"
 #include "node.cpp"
+#include "transition.cpp"
 #include<vector>
 #include<string>
 #include "input_box.cpp"
@@ -14,11 +15,11 @@
 // #include "display.cpp"
 #include "ext.cpp"
 using namespace std;
-
+int flag=-1;
 vector<node> nodes;
 vector<transition> transitions;
 vector<string> tr_label;
-node tr_nodes[2];
+int tr_nodes[2];
 int size = 650;
 int check = 0;
 bool displayName = false;
@@ -66,19 +67,17 @@ void mouseDetect(int button,int state,int x,int y)
 		}
 
 	if(transition_input!=0 && state == GLUT_DOWN){
-		vector <node> :: iterator i;
 		//Convert mouse to window coordinates
 		GLdouble win[3];
 		convert(win, x, y);
 		x = win[0];
 		y = win[1];
-		for (i = nodes.begin(); i != nodes.end(); ++i){
-			node n = *i;
+		for (int i=0; i < nodes.size();i++){
 
-			if(sqrt(pow(n.x-x,2)+pow(n.y-y,2))<=20){
+			if(sqrt(pow(nodes[i].x-x,2)+pow(nodes[i].y-y,2))<=20){
 				// cout<<"Inside"<<endl;
 				//Add node into tr_nodes
-				tr_nodes[2-transition_input]=n;
+				tr_nodes[2-transition_input]=i;
 				transition_input--;
 				cout<<transition_input<<endl;
 				if(transition_input == 0){
