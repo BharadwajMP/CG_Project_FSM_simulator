@@ -18,3 +18,12 @@ extern int transition_input;
 extern bool valid;
 extern float nx,ny;
 extern int flag;
+extern string validateString; // 
+extern bool displayValidateStatus; //
+extern string startState;
+extern string finalState;
+extern string instructions;
+extern string current;
+extern int pos;
+extern bool showNext;
+extern bool doneParsing;

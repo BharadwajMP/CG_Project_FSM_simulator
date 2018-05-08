@@ -1,16 +1,14 @@
 #include "display.cpp"
-// #include "ext.cpp"
 
-//Returns the next node to be traversed, if not found returns a null node
-int search(vector<transition> transitions,node current,string label){
+int searchNew(){
 	vector<string> t_label;
 	vector <transition> :: iterator j;
 	for (j = transitions.begin(); j != transitions.end(); ++j){
 		transition t=*j;
 		t_label=t.label;
-		vector<string>::iterator i;
-		for(i=t_label.begin();i!=t_label.end();++i){
-			if(*i==label && nodes[t.n1].label==current.label){
+		
+		for(int i=0; i<t_label.size();i++){
+			if((t_label[i])[0]==testString[pos] && nodes[t.n1].label==current){
 				 return t.n2;
 			}
 		}
@@ -19,52 +17,50 @@ int search(vector<transition> transitions,node current,string label){
 	return -1;
 }
 
-
-void validate(vector<node> nodes,vector<transition> transitions,string testString){
-	vector <transition> :: iterator j;
-		for (j = transitions.begin(); j != transitions.end(); ++j){
-			transition t=*j;
-			cout<<"Transition from node "<<nodes[t.n1].label<<" to node "<<nodes[t.n2].label<<endl;
-		}
-	string finalState="s1"; //Change this to make it dynamic
-	int index=0;
-	node current;
-	vector<node> :: iterator i;
-	//Replace the below block which assigns the start state
-	for (i = nodes.begin(); i != nodes.end(); ++i){
-			node t=*i;
-			if(t.label=="s0"){
-				current=t;
+void decideNext(){
+	int next=searchNew();
+	if(next!=-1){
+		//nodes[curPos].color[1]=1.0; 90.0/255.0, 142.0/255, 244.0/255.0
+		int j;
+		for(j=0;j<nodes.size();j++){
+			if(nodes[j].label==current){
 				break;
 			}
-	}
-	while(index<testString.length()){
-		// current.color[0]=0.5;
-		// current.color[1]=0.5;
-		// current.color[2]=0.5;
-		stringstream ss;
-		string target;
-		ss << testString.at(index);
-		ss >> target;
-		int next=search(transitions,current,target);
-		if(next!=-1){
-			cout<<"Move to state "<<nodes[next].label<<endl;  //90.0/255.0, 142.0/255, 244.0/255.0
-			flag=next;//Set flag to change color of node is display
-			current=nodes[next];
-			display();
-			flag=-1;
-			// cout<<"After display"<<endl;
-			// cout<<"Color : "<<next<<" "<<nodes[next].color[0]<<nodes[next].color[1]<<nodes[next].color[2]<<endl;
-			int i=0;
-			for(i=0;i<99999999;i++);
 		}
-		else
-			break;
-		index++;
+		nodes[j].color[0]=90.0/255.0;
+		nodes[j].color[1]=142.0/255.0;
+		nodes[j].color[2]=244/255.0;
+		nodes[next].color[0]=1.0;
+		nodes[next].color[1]=0.0;
+		nodes[next].color[2]=0.0;
+		current=nodes[next].label;
+		instructions="Move to state "+nodes[next].label+" with input symbol "+testString[pos];
+		cout<<instructions<<endl;
+		pos++;
 	}
-	if(current.label==finalState)
-		cout<<"String valid"<<endl;
-	else
-		cout<<"String invalid"<<endl;
-
+	else if(next==-1 || pos==testString.length()){
+		pos=testString.length();
+		instructions="";
+		doneParsing=true;
+	}
+	if(current==finalState&&pos==testString.length()){
+		cout<<"Valid"<<endl;
+		validateString="Input String Valid";
+		instructions="";
+		message="";
+		displayValidateStatus=true;
+		showNext=false;
+	}
+	else if(doneParsing){
+		cout<<"Invalid!!"<<endl;
+		validateString="Input String Invalid!!!";
+		instructions="";
+		message="";
+		displayValidateStatus=true;
+		doneParsing=false;
+		showNext=false;
+	}
+	
+	
+	display();
 }

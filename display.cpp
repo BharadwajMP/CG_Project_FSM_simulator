@@ -1,6 +1,8 @@
 // #include "Text/text.cpp"
 #include "ext.cpp"
-
+// void myMenu(int id){
+// 	cout<<id<<endl;
+// }
 void display()
 {
 	//To display title page
@@ -32,6 +34,10 @@ void display()
 		glFlush();
 		return;
 	}
+	//Menu
+	// int menu_id=glutCreateMenu(myMenu);
+	// glutAddMenuEntry("WOrking",1);
+	// glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	//Menu bar
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -110,7 +116,8 @@ void display()
 	}
 
 	if(flag!=-1){
-		nodes[flag].color[0]=90.0/255.0;//Reset color
+		// nodes[flag].color[0]=90.0/255.0;//Reset color
+		nodes[flag].color[0]=0;
 		nodes[flag].color[1]=142.0/255;
 		nodes[flag].color[2]=244.0/255.0;
 	}
@@ -139,7 +146,7 @@ void display()
 			// cout<<"Actual"<<t.label[i];
 		}
 		symbol.pop_back();
-		cout<<endl<<symbol<<endl;
+		// cout<<endl<<symbol<<endl; @changed
 		glColor3f(0, 0, 0);
 		renderBitmapString(t.cx,t.cy+10,symbol,GLUT_BITMAP_HELVETICA_18);
 	}
@@ -166,5 +173,28 @@ void display()
 		glColor3f(0,0,0);
 		renderBitmapString(540,440,testString,GLUT_BITMAP_HELVETICA_18);
 	}
+	if(displayValidateStatus){
+		input_box();
+		glColor3f(1,1,1);
+		renderBitmapString(548,470,"Validation Status",GLUT_BITMAP_HELVETICA_18);
+		glColor3f(0,0,0);
+		renderBitmapString(540,440,validateString,GLUT_BITMAP_HELVETICA_18);
+		for(int i=0;i<999999;i++);
+		
+	}
+	if(showNext){
+		
+		glColor3f(0.6999,0.6999,0.68);
+		glBegin(GL_POLYGON);
+			glVertex2f(1280,744-103);
+			glVertex2f(1280,744-77);
+			glVertex2f(1240,744-77);
+			glVertex2f(1240,744-103);
+		glEnd();
+		glColor3f(0,0,0);
+		renderBitmapString(1250,744-92,">>",GLUT_BITMAP_HELVETICA_18);
+	}
+	//renderBitmapString(740,760,"Input String: "+testString,GLUT_BITMAP_HELVETICA_18);
+	renderBitmapString(840,640,instructions,GLUT_BITMAP_HELVETICA_18);
 	glFlush();
 }
