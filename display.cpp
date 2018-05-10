@@ -34,10 +34,6 @@ void display()
 		glFlush();
 		return;
 	}
-	//Menu
-	// int menu_id=glutCreateMenu(myMenu);
-	// glutAddMenuEntry("WOrking",1);
-	// glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	//Menu bar
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -106,15 +102,40 @@ void display()
 		node n=*i;
 		z++;
 		GLsizei MOUSEx=n.x;GLsizei MOUSEy=n.y;
-		//GLfloat color[]={90.0/255.0, 142.0/255, 244.0/255.0};
 
-			// cout<<"Color : "<<z<<" "<<n.color[0]<<n.color[1]<<n.color[2]<<endl;
-		drawCircle(MOUSEx,MOUSEy,20,n.color);
+		drawCircle(MOUSEx,MOUSEy,30,n.color);
 		glColor3f(0,0,0);
 		renderBitmapString(MOUSEx-6,MOUSEy-2,n.label,GLUT_BITMAP_HELVETICA_18);
+		//Four points for nodes
+		if(transition_input!=0){
+			GLfloat color[] = {0.1,0.1,0.1};
+			drawCircle(n.x-30,n.y,5,color);
+			drawCircle(n.x+30,n.y,5,color);
+			drawCircle(n.x,n.y-30,5,color);
+			drawCircle(n.x,n.y+30,5,color);
+		}
 
+		//Start state line
+		if(!startState.compare(n.label)){
+			// glPointSize(5);
+			glColor3f(0,0,0);
+			glLineWidth(3);
+			glBegin(GL_LINES);
+				glVertex2f(n.x-30,n.y);
+				glVertex2f(n.x-70,n.y);
+			glEnd();
+			glBegin(GL_TRIANGLES);
+				glVertex2f(n.x-29,n.y);
+				glVertex2f(n.x-42,n.y+12);
+				glVertex2f(n.x-42,n.y-12);
+			glEnd();
+		}
 	}
-
+	// cout<<"finalstate: ";
+	//To draw final states
+	for(int i=0;i<final_state_index.size();i++){
+		draw_hollow_circle(nodes[final_state_index[i]].x,nodes[final_state_index[i]].y,0,20);
+	}
 	if(flag!=-1){
 		// nodes[flag].color[0]=90.0/255.0;//Reset color
 		nodes[flag].color[0]=0;
@@ -128,17 +149,19 @@ void display()
 		// glColor3f(0,0,0);
 		//Draw transition lines
 		glLineWidth(2);
-		GLfloat x1,x2;
-		if(nodes[t.n1].x>nodes[t.n2].x){
-			x1=nodes[t.n1].x-20;
-			x2=nodes[t.n2].x+20;
-		}
-		else{
-			x1=nodes[t.n1].x+20;
-			x2=nodes[t.n2].x-20;
-		}
+		// GLfloat x1,x2;
+		// if(nodes[t.n1].x>nodes[t.n2].x){
+		// 	x1=nodes[t.n1].x-30;
+		// 	x2=nodes[t.n2].x+30;
+		// }
+		// else{
+		// 	x1=nodes[t.n1].x+30;
+		// 	x2=nodes[t.n2].x-30;
+		// }
 
-		spline(x1,nodes[t.n1].y,x2,nodes[t.n2].y,t.cx,t.cy);
+		spline(t.nx1,t.ny1,t.nx2,t.ny2,t.cx,t.cy);
+		t.cx = point[0];
+		t.cy = point[1];
 		string symbol = "";
 		for(int i = 0;i < t.label.size();i++){
 			symbol.append(t.label[i]);
@@ -148,7 +171,7 @@ void display()
 		symbol.pop_back();
 		// cout<<endl<<symbol<<endl; @changed
 		glColor3f(0, 0, 0);
-		renderBitmapString(t.cx,t.cy+10,symbol,GLUT_BITMAP_HELVETICA_18);
+		renderBitmapString(t.cx+2,t.cy+14,symbol,GLUT_BITMAP_HELVETICA_18);
 	}
 	//Display input box to accept state name
 	if(state_input){
@@ -180,10 +203,10 @@ void display()
 		glColor3f(0,0,0);
 		renderBitmapString(540,440,validateString,GLUT_BITMAP_HELVETICA_18);
 		for(int i=0;i<999999;i++);
-		
+
 	}
 	if(showNext){
-		
+
 		glColor3f(0.6999,0.6999,0.68);
 		glBegin(GL_POLYGON);
 			glVertex2f(1280,744-103);

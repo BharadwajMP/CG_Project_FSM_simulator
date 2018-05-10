@@ -18,7 +18,7 @@ extern int transition_input;
 extern bool valid;
 extern float nx,ny;
 extern int flag;
-extern string validateString; // 
+extern string validateString; //
 extern bool displayValidateStatus; //
 extern string startState;
 extern string finalState;
@@ -27,3 +27,6 @@ extern string current;
 extern int pos;
 extern bool showNext;
 extern bool doneParsing;
+extern int start_state_index;
+extern vector<int> final_state_index;
+extern GLfloat point[2];

@@ -1,5 +1,6 @@
 #include <GL/glut.h>
 #include <math.h>
+#include "ext.cpp"
 
 typedef struct wcPt3D
 {
@@ -58,6 +59,13 @@ void spline(GLfloat x1,GLfloat y1,GLfloat x2,GLfloat y2,GLfloat cx,GLfloat cy)
         }
         glEnd();
 
+				//To get point for text(transition label)
+
+				u=0.5;
+				computeBezPt(u, &bezCurvePt, nCtrlPts, ctrlPts, C);
+				point[0] = bezCurvePt.x;
+				point[1] = bezCurvePt.y;
+
         wcPt3D a;
         u=25.0/GLfloat(nBezCurvePts);
         computeBezPt(u, &a, nCtrlPts, ctrlPts, C);
@@ -71,7 +79,6 @@ void spline(GLfloat x1,GLfloat y1,GLfloat x2,GLfloat y2,GLfloat cx,GLfloat cy)
         glPushMatrix();
         glTranslatef(a.x, a.y, 0);
 				if(x1>x2){
-					// cout<<"Rotated 180"<<endl;
 					glRotatef(180, 0, 0, 1);
 				}
         glRotatef(atan(m)*180/3.14, 0, 0, 1);

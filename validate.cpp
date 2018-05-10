@@ -6,7 +6,7 @@ int searchNew(){
 	for (j = transitions.begin(); j != transitions.end(); ++j){
 		transition t=*j;
 		t_label=t.label;
-		
+
 		for(int i=0; i<t_label.size();i++){
 			if((t_label[i])[0]==testString[pos] && nodes[t.n1].label==current){
 				 return t.n2;
@@ -38,20 +38,30 @@ void decideNext(){
 		cout<<instructions<<endl;
 		pos++;
 	}
-	else if(next==-1 || pos==testString.length()){
+	else if(pos==testString.length()){
 		pos=testString.length();
 		instructions="";
 		doneParsing=true;
 	}
-	if(current==finalState&&pos==testString.length()){
-		cout<<"Valid"<<endl;
-		validateString="Input String Valid";
+	else if(next == -1){
 		instructions="";
-		message="";
-		displayValidateStatus=true;
-		showNext=false;
+		doneParsing=true;
 	}
-	else if(doneParsing){
+
+	if(pos==testString.length()){
+		for(int i=0;i<final_state_index.size();i++)
+		if(current==nodes[final_state_index[i]].label){
+			cout<<"Valid"<<endl;
+			validateString="Input String Valid";
+			instructions="";
+			message="";
+			displayValidateStatus=true;
+			showNext=false;
+			display();
+			return;
+		}
+	}
+	if(doneParsing){
 		cout<<"Invalid!!"<<endl;
 		validateString="Input String Invalid!!!";
 		instructions="";
@@ -60,7 +70,5 @@ void decideNext(){
 		doneParsing=false;
 		showNext=false;
 	}
-	
-	
 	display();
 }

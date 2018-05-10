@@ -16,14 +16,14 @@
 // #include "display.cpp"
 #include "ext.cpp"
 using namespace std;
-int flag=-1,count=0;
+int flag=-1;
 vector<node> nodes;
 vector<transition> transitions;
 vector<string> tr_label;
 int tr_nodes[2];
 int size = 650;
 int check = 0;
-bool displayName = true;
+bool displayName = false;
 bool createNode=false;
 bool doneParsing=false;
 string message="Message Box";
@@ -43,18 +43,21 @@ float nx,ny;
 int menu_index=0;
 int start_state,final_state;
 string startState="";
-string finalState="";
+// string finalState="";
 string instructions="";
 string current="";
 int pos=-1;
 bool showNext=false;
 int buttonPress=0;
+int start_state_index;
+vector<int> final_state_index;
+GLfloat point[2];
+GLfloat tr_points[4];
+int z=0;
 //To detect drag
 
 void mouseDetect(int button,int state,int x,int y)
 {
-	//cout<<x<<" "<<y<<endl;
-	//To see if drag should be performed or not
 	if(change_control_point == true && state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
 		GLdouble win[3];
 		convert(win, x, y);
@@ -86,23 +89,63 @@ void mouseDetect(int button,int state,int x,int y)
 		convert(win, x, y);
 		x = win[0];
 		y = win[1];
+		// cout<<"Actual = "<<x<<","<<y<<endl;
+		int min_p=0;//To store the index of closest point on node
 		for (int i=0; i < nodes.size();i++){
+			if(sqrt(pow(nodes[i].x-x,2)+pow(nodes[i].y-y,2))<=(30+6)){
+				// cout<<"Node pos = "<<nodes[i].x<<","<<nodes[i].y<<endl;
+				GLfloat a[4];
+				// cout<<"Node "<<i<<"selected ";
+				a[0] = sqrt(pow(nodes[i].x-30-x,2)+pow(nodes[i].y-y,2));
+				a[1] = sqrt(pow(nodes[i].x+30-x,2)+pow(nodes[i].y-y,2));
+				a[2] = sqrt(pow(nodes[i].x-x,2)+pow(nodes[i].y-30-y,2));
+				a[3] = sqrt(pow(nodes[i].x-x,2)+pow(nodes[i].y+30-y,2));
 
-			if(sqrt(pow(nodes[i].x-x,2)+pow(nodes[i].y-y,2))<=20){
-				// cout<<"Inside"<<endl;
-				//Add node into tr_nodes
-				tr_nodes[2-transition_input]=i;
-				transition_input--;
-				// cout<<transition_input<<endl; @changed
-				if(transition_input == 0){
-					tr_label_input = true;
-					message = "Enter transition symbols separated by comma for multiple symbols";
-					display();
+				cout<<"a : ";
+				for(int tmp=0;tmp<4;tmp++)
+					cout<<a[tmp]<<" ";
+				cout<<endl;
+
+				min_p=0;
+				for(int j=1;j<4;j++){
+					if(a[min_p]>a[j])
+						min_p=j;
 				}
+				cout<<a[min_p]<<endl;
+
+				if(min_p==0){
+					tr_points[z++] = nodes[i].x-30;
+					tr_points[z++] = nodes[i].y;
+				}
+				if(min_p==1){
+					tr_points[z++] = nodes[i].x+30;
+					tr_points[z++] = nodes[i].y;
+				}
+				if(min_p==2){
+					tr_points[z++] = nodes[i].x;
+					tr_points[z++] = nodes[i].y-30;
+				}
+				if(min_p==3){
+					tr_points[z++] = nodes[i].x;
+					tr_points[z++] = nodes[i].y+30;
+				}
+				GLfloat color[] = {0,1,0};
+				drawCircle(tr_points[z-2],tr_points[z-1],5,color);
+				glFlush();
+				//Add node into tr_nodes
+				tr_nodes[2-transition_input] = i;
+				transition_input--;
 				break;
 			}
-			// cout<<"Outside"<<endl;
 		}
+				// cout<<transition_input<<endl; @changed
+		if(transition_input == 0){
+			z=0;
+			tr_label_input = true;
+			message = "Enter transition symbols separated by comma for multiple symbols";
+			display();
+		}
+				// break;
 	}
 	//Create node button clicked
 	if(x>21 && x<168 && y>15 && y<52){
@@ -113,8 +156,6 @@ void mouseDetect(int button,int state,int x,int y)
 	if(createNode){
 		message="Message Box";
 		if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN && !(x>21 && x<168 && y>15 && y<52)){
-			// cout<<"In create node"<<endl;
-
 			state_input  = true;
 			stateLabel = "";
 	    createNode=false;
@@ -136,7 +177,7 @@ void mouseDetect(int button,int state,int x,int y)
 	//cout<<x<<" "<<y<<endl;
 	//Test FSM Clicked
 	if(x > 303 && x < 404 && y > 11 && y < 42){
-		if(startState==""||finalState==""){
+		if(startState==""||final_state_index.size()==0){
 		cout<<"returning"<<endl;
 		message="Start State or Final State Not Selected";
 		display();
@@ -146,21 +187,10 @@ void mouseDetect(int button,int state,int x,int y)
 		test_input=true;
 		display();
 		showNext=true;
-		
-		//cout<<"Test FSM clicked"<<endl;
-		// cout<<"Pos= "<<pos<<endl;
-		// if(pos==-1){
-		// 	test_input=true; //org
-		// 	display(); //org
-		// 	// test_input=false;
-		// 	pos=0;
-		// }
-		// validate(testString);
 	}
 
 	//for >> button
 	if(x>1290 && x<1331 && y>78 && y<103){
-		//cout<<">> clicked"<<endl;
 		buttonPress++;
 		if(buttonPress==2){
 			decideNext();
@@ -187,9 +217,12 @@ void key(unsigned char key,int x,int y){
 			nodes.push_back(node(nx,ny,string(stateLabel),color));
 			char Label[10];
 			strcpy(Label,stateLabel.c_str());
-			glutAddMenuEntry(Label,menu_index++);
-			glutSetMenu(final_state);
+			//Start state menu
 			glutAddMenuEntry(Label,menu_index);
+			glutSetMenu(final_state);
+			//Final state menu
+			glutAddMenuEntry(Label,menu_index);
+			menu_index++;
 			glutSetMenu(start_state);
 			display();
 			return;
@@ -215,7 +248,8 @@ void key(unsigned char key,int x,int y){
 			while(getline(s, l, ',')){
 				tr_label.push_back(l);
 			}
-			transitions.push_back(transition(tr_nodes[0],tr_nodes[1],tr_label));
+			z=0;
+			transitions.push_back(transition(tr_nodes[0],tr_nodes[1],tr_label,tr_points[0],tr_points[1],tr_points[2],tr_points[3]));
 			change_control_point = true;
 			message = "Click to change transition curve.Press enter if done.";
 			trLabel="";
@@ -291,39 +325,38 @@ void startMenu(int id){
 	cout<<Label<<" selected as start state"<<endl;
 	message=string(Label)+" selected as start state";
 	startState=Label;
+	start_state_index = id;
 	display();
 }
 void finalMenu(int id){
 	char Label[10];
-	strcpy(Label,nodes[id-1].label.c_str());
+	cout<<"id = "<<id<<endl;
+	// strcpy(Label,nodes[id].label.c_str());
+	final_state_index.push_back(id);
 	cout<<Label<<" selected as final state"<<endl;
-	finalState=Label;
-	message=string(Label)+" selected as final state";
+	// finalState=Label;
+
+	message=string(nodes[id].label)+" selected as final state";
 	display();
 }
 void myMenu(int id){
-	
+
 }
 int main(int argc,char **argv)
 {
-	if(count==0){
-		glutInit(&argc, argv);
-		glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-		//glutInitWindowSize(size+400,size);
-		glutInitWindowSize(1366,750);
-		glutInitWindowPosition(0,0);
-		glutCreateWindow("FSM Simulator");
-		glClear(GL_COLOR_BUFFER_BIT);
-		glClearColor(1,1,1,1);
-		glutDisplayFunc(display);
-		glMatrixMode(GL_PROJECTION);
-		glOrtho(0,1314,0,744,-700,700);
-		glutMouseFunc(mouseDetect);
-		// glutMotionFunc(mouseDrag);
-		glutKeyboardFunc(key);
-	
-		count=1;
-	}
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	//glutInitWindowSize(size+400,size);
+	glutInitWindowSize(1366,750);
+	glutInitWindowPosition(0,0);
+	glutCreateWindow("FSM Simulator");
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(1,1,1,1);
+	glutDisplayFunc(display);
+	glMatrixMode(GL_PROJECTION);
+	glOrtho(0,1314,0,744,-700,700);
+	glutMouseFunc(mouseDetect);
+	glutKeyboardFunc(key);
 	start_state=glutCreateMenu(startMenu);
 	final_state=glutCreateMenu(finalMenu);
 	//cout<<menu_id<<endl;
