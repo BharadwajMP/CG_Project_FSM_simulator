@@ -1,6 +1,5 @@
 #include<iostream>
 #include<GL/glut.h>
-//#include "Text/text.cpp"
 #include "circle.cpp"
 #include "node.cpp"
 #include "transition.cpp"
@@ -13,7 +12,6 @@
 #include "Spline.cpp"
 #include "mouse_to_window.cpp"
 #include "validate.cpp"
-// #include "display.cpp"
 #include "ext.cpp"
 using namespace std;
 int flag=-1;
@@ -23,7 +21,8 @@ vector<string> tr_label;
 int tr_nodes[2];
 int size = 650;
 int check = 0;
-bool displayName = false;
+bool displayName = true;
+bool displayInstruc = true;
 bool createNode=false;
 bool doneParsing=false;
 string message="Message Box";
@@ -43,7 +42,6 @@ float nx,ny;
 int menu_index=0;
 int start_state,final_state;
 string startState="";
-// string finalState="";
 string instructions="";
 string current="";
 int pos=-1;
@@ -200,6 +198,11 @@ void mouseDetect(int button,int state,int x,int y)
 }
 
 void key(unsigned char key,int x,int y){
+	//display instructions
+	if(displayInstruc == true && displayName == false){
+			displayInstruc = false;
+			display();
+		}
 	//To exit change transition onece enter is pressed
 	if(change_control_point && key == 13){
 		change_control_point=false;
@@ -208,8 +211,6 @@ void key(unsigned char key,int x,int y){
 	}
 
 	if(state_input == true){
-		// cout<<"Key pressed : "<<key<<endl;
-		// cout<<stateLabel<<endl;
 		if(key == 13 && stateLabel.compare("")){
 			// cout<<"Key pressed : Enter"<<endl;
 			state_input = false;

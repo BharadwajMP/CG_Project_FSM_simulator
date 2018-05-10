@@ -30,3 +30,4 @@ extern bool doneParsing;
 extern int start_state_index;
 extern vector<int> final_state_index;
 extern GLfloat point[2];
+extern bool displayInstruc;

@@ -30,9 +30,22 @@ void display()
 		renderStrokeFontString(5400,1500,"Bharadwaj MP (1PE15CS037)",1,1,1,1,0.15);
 		renderStrokeFontString(5400,1300,"Harsha MS (1PE15CS057)",1,1,1,1,0.15);
 		renderStrokeFontString(3400,2180,"Start",1.2,0,1,0,0.17);
-
 		glFlush();
 		return;
+	}
+
+	if(displayInstruc){
+		glClear(GL_COLOR_BUFFER_BIT);
+		renderStrokeFontString(200,3500,"Instructions:",4,1,0,0,0.2);
+		glColor3f(0,0,0);
+		renderBitmapString(20,650,"-> Select 'Create node' to add states and click on the location you want to place the state.",GLUT_BITMAP_HELVETICA_18);
+		renderBitmapString(20,620,"-> Then select 'Add transition' to create transitions between states and click on the states to add transition for.",GLUT_BITMAP_HELVETICA_18);
+		renderBitmapString(20,600,"      Adjust the transition curve by using mouse if neccessary. Input the transititon symbols in the popup box.",GLUT_BITMAP_HELVETICA_18);
+		renderBitmapString(20,570,"-> Test the FSM you created by selecting 'Test FSM' button. Enter the string to check in the popup box.",GLUT_BITMAP_HELVETICA_18);
+		renderBitmapString(20,540,"-> Analyse the FSM for the given input step by step using the button on the top right corner.",GLUT_BITMAP_HELVETICA_18);
+		renderBitmapString(200,400,"Press enter to continue",GLUT_BITMAP_HELVETICA_18);
+		glFlush();
+		return;	
 	}
 
 	//Menu bar
