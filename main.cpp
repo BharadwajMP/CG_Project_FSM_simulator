@@ -52,11 +52,26 @@ vector<int> final_state_index;
 GLfloat point[2];//To hold central control point of bezier curve
 GLfloat tr_points[4];
 int z=0;
+int screenshot=0;
 //To detect drag
 
 void mouseDetect(int button,int state,int x,int y)
 {
-	// cout<<"x = "<<x<<" y = "<<y<<endl;
+	cout<<"x = "<<x<<" y = "<<y<<endl;
+
+	//Screenshot button
+	if(x>=1240 && x<=1359 && y >=10 && y<=39){
+		screenshot++;
+		// cout<<"Entered"<<endl;
+		// cout<<"Saved"<<endl;
+		auto name = "screenshot("+to_string(screenshot);
+		name = name +").png";
+		int save_result = SOIL_save_screenshot(name.c_str(),SOIL_SAVE_TYPE_BMP,0, 0, 1024, 700);
+		message="Screenshot saved";
+		display();
+		return;
+	}
+
 	if(change_control_point == true && state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
 		GLdouble win[3];
 		convert(win, x, y);
@@ -173,7 +188,7 @@ void mouseDetect(int button,int state,int x,int y)
 		transition_input = 2;
 		display();
 	}
-	//cout<<x<<" "<<y<<endl;
+
 	//Test FSM Clicked
 	if(x > 303 && x < 404 && y > 11 && y < 42){
 		if(startState==""||final_state_index.size()==0){
@@ -369,9 +384,8 @@ int main(int argc,char **argv)
 	glutAddSubMenu("Select Start State",start_state);
 	glutAddSubMenu("Select Final state",final_state);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
-	//glEnable(GL_COLOR_MATERIAL);
+	
 	glutSetMenu(start_state);
-	//main(argc,argv);
-	 glutMainLoop();
+	glutMainLoop();
 
 }

@@ -18,18 +18,18 @@ void display()
     		glTexCoord2i(0,0); glVertex2i(0, 0);
     		glTexCoord2i(0,1); glVertex2i(0, 744);
 		glEnd();
-
+		
 		glDisable(GL_TEXTURE_2D);
-
+		glDeleteTextures(1,&texture);
+		cout<<SOIL_last_result()<<endl;
 		glFlush();
 		return;
 	}
-
+	//To display instruction screen
 	if(displayInstruc){
 		glClear(GL_COLOR_BUFFER_BIT);
-		
-		glColor4f(1,1,1,1);
-		GLuint texture = SOIL_load_OGL_texture("instructions.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB);
+		glColor3f(1,1,1);
+		GLuint texture = SOIL_load_OGL_texture("instructions.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB);
 		glGenTextures(1, &texture);
 		glEnable(GL_TEXTURE_2D);
 
@@ -39,14 +39,16 @@ void display()
     		glTexCoord2i(0,0); glVertex2i(0, 0);
     		glTexCoord2i(0,1); glVertex2i(0, 744);
 		glEnd();
-
-		glDisable(GL_TEXTURE_2D);
-
 		
+		cout<<SOIL_last_result()<<endl;
+		// SOIL_free_image_data(texture);
+		glDisable(GL_TEXTURE_2D);
+		glDeleteTextures(1,&texture);
 		glFlush();
 		return;
 	}
 
+	glDisable(GL_TEXTURE_2D);
 	//Menu bar
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -69,7 +71,7 @@ void display()
 
 	glColor3f(0,0,0);
 	renderBitmapString(20,744-33,"Create Node",GLUT_BITMAP_HELVETICA_18);
-	//transition=true;
+	//Add transition button
 	glColor3f(0.6999,0.6999,0.68);
 	glBegin(GL_POLYGON);
 		glVertex2f(140,744-43);
@@ -77,10 +79,10 @@ void display()
 		glVertex2f(280,744-8);
 		glVertex2f(280,744-43);
 	glEnd();
-//	renderStrokeFontString(1650,6150,"Add Transition",3,0,0,0,0.1);
+
 	glColor3f(0,0,0);
 	renderBitmapString(150,744 - 33,"Add Transition",GLUT_BITMAP_HELVETICA_18);
-	//test=true;
+	//Test FSM button
 	glColor3f(0.6999,0.6999,0.68);
 	glBegin(GL_POLYGON);
 		glVertex2f(290,744-8);
@@ -88,9 +90,21 @@ void display()
 		glVertex2f(390,744-43);
 		glVertex2f(390,744-8);
 	glEnd();
-//	renderStrokeFontString(3450,6150,"Test FSM",3,0,0,0,0.1);
+
 	glColor3f(0,0,0);
 	renderBitmapString(300,744-33,"Test FSM",GLUT_BITMAP_HELVETICA_18);
+	//Screenshot button
+	glColor3f(0.6999,0.6999,0.68);
+	glBegin(GL_POLYGON);
+		glVertex2f(1190,744-8);
+		glVertex2f(1190,744-43);
+		glVertex2f(1310,744-43);
+		glVertex2f(1310,744-8);
+	glEnd();
+
+	glColor3f(0,0,0);
+	renderBitmapString(1205,744-33,"Screenshot",GLUT_BITMAP_HELVETICA_18);
+
 	glColor3f(0.5,0.5,0.5);
 	glBegin(GL_POLYGON);
 		glVertex2f(0,0);
@@ -222,6 +236,7 @@ void display()
 		renderBitmapString(1250,744-92,">>",GLUT_BITMAP_HELVETICA_18);
 	}
 	//renderBitmapString(740,760,"Input String: "+testString,GLUT_BITMAP_HELVETICA_18);
+	
 	renderBitmapString(840,640,instructions,GLUT_BITMAP_HELVETICA_18);
 	glFlush();
 }
