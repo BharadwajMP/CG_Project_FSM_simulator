@@ -59,12 +59,12 @@ void spline(GLfloat x1,GLfloat y1,GLfloat x2,GLfloat y2,GLfloat cx,GLfloat cy)
         }
         glEnd();
 
-				//To get point for text(transition label)
+	//To get point for text(transition label)
 
-				u=0.5;
-				computeBezPt(u, &bezCurvePt, nCtrlPts, ctrlPts, C);
-				point[0] = bezCurvePt.x;
-				point[1] = bezCurvePt.y;
+	u=0.5;
+	computeBezPt(u, &bezCurvePt, nCtrlPts, ctrlPts, C);
+	point[0] = bezCurvePt.x;
+	point[1] = bezCurvePt.y;
 
         wcPt3D a;
         u=25.0/GLfloat(nBezCurvePts);
@@ -92,5 +92,53 @@ void spline(GLfloat x1,GLfloat y1,GLfloat x2,GLfloat y2,GLfloat cx,GLfloat cy)
         glEnd();
         glRotatef(-atan(m)*180/3.14, 0, 0, 1);
         glPopMatrix();
+        delete []C;
+}
+
+void self_loop(int node)
+{
+        GLfloat x1 = (GLfloat)nodes[node].x;
+        GLfloat y1 = (GLfloat)nodes[node].y+30;
+        wcPt3D ctrlPts[4] = {{x1-10,y1-2,0},{x1-50,y1+50,0},{x1+50,y1+50,0},{x1+10,y1-2,0}};
+        wcPt3D bezCurvePt;
+        GLfloat u;
+        GLint *C, k;
+        C= new GLint[4];
+        bino(3, C);
+        glBegin(GL_LINE_STRIP);
+        int nBezCurvePts = 50;
+        int nCtrlPts = 4;
+
+        glColor3f(0, 0, 0);
+        for(k=0; k<=nBezCurvePts; k++)
+        {
+                u=GLfloat(k)/GLfloat(nBezCurvePts);
+                computeBezPt(u, &bezCurvePt, nCtrlPts, ctrlPts, C);
+                glVertex2f(bezCurvePt.x, bezCurvePt.y);
+        }
+        glEnd();
+
+	//To get point for text(transition label)
+
+	u=0.5;
+	computeBezPt(u, &bezCurvePt, nCtrlPts, ctrlPts, C);
+	point[0] = bezCurvePt.x;
+	point[1] = bezCurvePt.y;
+
+        wcPt3D a;
+        u=27.0/GLfloat(nBezCurvePts);
+        computeBezPt(u, &a, nCtrlPts, ctrlPts, C);
+        wcPt3D b;
+        u=28.0/GLfloat(nBezCurvePts);
+        computeBezPt(u, &b, nCtrlPts, ctrlPts, C);
+
+	glColor3f(0, 0, 1);
+        
+        glBegin(GL_TRIANGLES);
+          //To calculate other points on the triangle
+          glVertex2f(a.x, a.y);
+          glVertex2f(a.x-14, a.y+10);
+          glVertex2f(a.x-14, a.y-10);
+        glEnd();
         delete []C;
 }

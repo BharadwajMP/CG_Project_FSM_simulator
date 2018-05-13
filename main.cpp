@@ -21,8 +21,8 @@ vector<string> tr_label;
 int tr_nodes[2];
 int size = 650;
 int check = 0;
-bool displayName = true;
-bool displayInstruc = true;
+bool displayName = false;
+bool displayInstruc = false;
 bool createNode=false;
 bool doneParsing=false;
 string message="Message Box";
@@ -49,7 +49,7 @@ bool showNext=false;
 int buttonPress=0;
 int start_state_index;
 vector<int> final_state_index;
-GLfloat point[2];
+GLfloat point[2];//To hold central control point of bezier curve
 GLfloat tr_points[4];
 int z=0;
 //To detect drag

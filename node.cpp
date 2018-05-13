@@ -12,12 +12,7 @@ public:
 		y=0;
 		label="";
 	}
-	// node(float xC,float yC,string labelC){
-	// 	x=xC;
-	// 	y=yC;
-	// 	label=labelC;
-	// 	//color=colorv;
-	// }
+
 	node(float xC,float yC,string labelC,GLfloat colorv[3]){
 		x=xC;
 		y=yC;

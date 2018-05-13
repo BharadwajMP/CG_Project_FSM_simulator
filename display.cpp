@@ -159,20 +159,12 @@ void display()
 	vector <transition> :: iterator j;
 	for (j = transitions.begin(); j != transitions.end(); ++j){
 		transition t=*j;
-		// glColor3f(0,0,0);
 		//Draw transition lines
 		glLineWidth(2);
-		// GLfloat x1,x2;
-		// if(nodes[t.n1].x>nodes[t.n2].x){
-		// 	x1=nodes[t.n1].x-30;
-		// 	x2=nodes[t.n2].x+30;
-		// }
-		// else{
-		// 	x1=nodes[t.n1].x+30;
-		// 	x2=nodes[t.n2].x-30;
-		// }
-
-		spline(t.nx1,t.ny1,t.nx2,t.ny2,t.cx,t.cy);
+		if(t.n1 != t.n2)
+			spline(t.nx1,t.ny1,t.nx2,t.ny2,t.cx,t.cy);
+		else
+			self_loop(t.n1);
 		t.cx = point[0];
 		t.cy = point[1];
 		string symbol = "";
