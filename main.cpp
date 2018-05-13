@@ -21,7 +21,7 @@ vector<string> tr_label;
 int tr_nodes[2];
 int size = 650;
 int check = 0;
-bool displayName = false;
+bool displayName = true;
 bool displayInstruc = false;
 bool createNode=false;
 bool doneParsing=false;

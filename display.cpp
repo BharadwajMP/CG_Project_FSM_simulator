@@ -1,8 +1,7 @@
 // #include "Text/text.cpp"
 #include "ext.cpp"
-// void myMenu(int id){
-// 	cout<<id<<endl;
-// }
+#include <SOIL/SOIL.h>
+
 void display()
 {
 	//To display title page
@@ -30,6 +29,26 @@ void display()
 		renderStrokeFontString(5400,1500,"Bharadwaj MP (1PE15CS037)",1,1,1,1,0.15);
 		renderStrokeFontString(5400,1300,"Harsha MS (1PE15CS057)",1,1,1,1,0.15);
 		renderStrokeFontString(3400,2180,"Start",1.2,0,1,0,0.17);
+
+
+		//PES logo
+		glColor3f(1,1,1);
+		GLuint texture = SOIL_load_OGL_texture("logo.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+		glGenTextures(1, &texture);
+		glEnable(GL_TEXTURE_2D);
+    // glBindTexture( GL_TEXTURE_2D, texture );
+
+		cout<<SOIL_last_result()<<endl;
+		glBegin(GL_POLYGON);
+		glTexCoord2i(1,1); glVertex2i(500 , 500);
+    glTexCoord2i(1,0); glVertex2i(500 , 100);
+    glTexCoord2i(0,0); glVertex2i(100 , 100);
+    glTexCoord2i(0,1); glVertex2i(100 , 500);
+		glEnd();
+		cout<<SOIL_last_result()<<endl;
+		glDisable(GL_TEXTURE_2D);
+
+
 		glFlush();
 		return;
 	}
@@ -45,7 +64,7 @@ void display()
 		renderBitmapString(20,540,"-> Analyse the FSM for the given input step by step using the button on the top right corner.",GLUT_BITMAP_HELVETICA_18);
 		renderBitmapString(200,400,"Press enter to continue",GLUT_BITMAP_HELVETICA_18);
 		glFlush();
-		return;	
+		return;
 	}
 
 	//Menu bar
