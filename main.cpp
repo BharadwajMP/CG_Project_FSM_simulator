@@ -22,7 +22,7 @@ int tr_nodes[2];
 int size = 650;
 int check = 0;
 bool displayName = true;
-bool displayInstruc = false;
+bool displayInstruc = true;
 bool createNode=false;
 bool doneParsing=false;
 string message="Message Box";
@@ -56,6 +56,7 @@ int z=0;
 
 void mouseDetect(int button,int state,int x,int y)
 {
+	// cout<<"x = "<<x<<" y = "<<y<<endl;
 	if(change_control_point == true && state == GLUT_DOWN && button == GLUT_LEFT_BUTTON){
 		GLdouble win[3];
 		convert(win, x, y);
@@ -74,9 +75,9 @@ void mouseDetect(int button,int state,int x,int y)
 	}
 
 	if(displayName)//To check if start button is pressed
-		if(x > 589 && x <701 && y > 342 && y < 391)
+		if(x >= 612 && x <= 780 && y >= 334 && y <= 384)
 		{
-			cout<<"Inside"<<endl;
+			// cout<<"Inside"<<endl;
 			displayName = false;
 			display();
 		}

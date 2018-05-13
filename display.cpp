@@ -7,47 +7,19 @@ void display()
 	//To display title page
 	if(displayName)
 	{
-		//Background
-		glColor3f(0.184,0.31,0.31);
-		glBegin(GL_POLYGON);
-			glVertex2f(0,0);
-			glVertex2f(1314,0);
-			glVertex2f(1314,744);
-			glVertex2f(0,744);
-		glEnd();
-
-		//Strat button
-		glColor3f(0,0,0);
-		glBegin(GL_POLYGON);
-			glVertex2f(565,355);
-			glVertex2f(675,355);
-			glVertex2f(675,405);
-			glVertex2f(565,405);
-		glEnd();
-		//Project info
-		renderStrokeFontString(1500,1600,"FSM Simulator",4,1,0,0,0.3);
-		renderStrokeFontString(5400,1500,"Bharadwaj MP (1PE15CS037)",1,1,1,1,0.15);
-		renderStrokeFontString(5400,1300,"Harsha MS (1PE15CS057)",1,1,1,1,0.15);
-		renderStrokeFontString(3400,2180,"Start",1.2,0,1,0,0.17);
-
-
-		//PES logo
 		glColor3f(1,1,1);
-		GLuint texture = SOIL_load_OGL_texture("logo.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+		GLuint texture = SOIL_load_OGL_texture("home.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB );
 		glGenTextures(1, &texture);
 		glEnable(GL_TEXTURE_2D);
-    // glBindTexture( GL_TEXTURE_2D, texture );
 
-		cout<<SOIL_last_result()<<endl;
 		glBegin(GL_POLYGON);
-		glTexCoord2i(1,1); glVertex2i(500 , 500);
-    glTexCoord2i(1,0); glVertex2i(500 , 100);
-    glTexCoord2i(0,0); glVertex2i(100 , 100);
-    glTexCoord2i(0,1); glVertex2i(100 , 500);
+			glTexCoord2i(1,1); glVertex2i(1314, 744);
+    		glTexCoord2i(1,0); glVertex2i(1314, 0);
+    		glTexCoord2i(0,0); glVertex2i(0, 0);
+    		glTexCoord2i(0,1); glVertex2i(0, 744);
 		glEnd();
-		cout<<SOIL_last_result()<<endl;
-		glDisable(GL_TEXTURE_2D);
 
+		glDisable(GL_TEXTURE_2D);
 
 		glFlush();
 		return;
@@ -55,14 +27,22 @@ void display()
 
 	if(displayInstruc){
 		glClear(GL_COLOR_BUFFER_BIT);
-		renderStrokeFontString(200,3500,"Instructions:",4,1,0,0,0.2);
-		glColor3f(0,0,0);
-		renderBitmapString(20,650,"-> Select 'Create node' to add states and click on the location you want to place the state.",GLUT_BITMAP_HELVETICA_18);
-		renderBitmapString(20,620,"-> Then select 'Add transition' to create transitions between states and click on the states to add transition for.",GLUT_BITMAP_HELVETICA_18);
-		renderBitmapString(20,600,"      Adjust the transition curve by using mouse if neccessary. Input the transititon symbols in the popup box.",GLUT_BITMAP_HELVETICA_18);
-		renderBitmapString(20,570,"-> Test the FSM you created by selecting 'Test FSM' button. Enter the string to check in the popup box.",GLUT_BITMAP_HELVETICA_18);
-		renderBitmapString(20,540,"-> Analyse the FSM for the given input step by step using the button on the top right corner.",GLUT_BITMAP_HELVETICA_18);
-		renderBitmapString(200,400,"Press enter to continue",GLUT_BITMAP_HELVETICA_18);
+		
+		glColor4f(1,1,1,1);
+		GLuint texture = SOIL_load_OGL_texture("instructions.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB);
+		glGenTextures(1, &texture);
+		glEnable(GL_TEXTURE_2D);
+
+		glBegin(GL_POLYGON);
+			glTexCoord2i(1,1); glVertex2i(1314, 744);
+    		glTexCoord2i(1,0); glVertex2i(1314, 0);
+    		glTexCoord2i(0,0); glVertex2i(0, 0);
+    		glTexCoord2i(0,1); glVertex2i(0, 744);
+		glEnd();
+
+		glDisable(GL_TEXTURE_2D);
+
+		
 		glFlush();
 		return;
 	}
