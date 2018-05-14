@@ -1,14 +1,14 @@
 // #include "Text/text.cpp"
 #include "ext.cpp"
 #include <SOIL/SOIL.h>
-
+GLuint bt;
 void display()
 {
 	//To display title page
 	if(displayName)
 	{
 		glColor3f(1,1,1);
-		GLuint texture = SOIL_load_OGL_texture("home.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB );
+		GLuint texture = SOIL_load_OGL_texture("home.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_INVERT_Y |  SOIL_FLAG_POWER_OF_TWO );
 		glGenTextures(1, &texture);
 		glEnable(GL_TEXTURE_2D);
 
@@ -21,7 +21,7 @@ void display()
 		
 		glDisable(GL_TEXTURE_2D);
 		glDeleteTextures(1,&texture);
-		cout<<SOIL_last_result()<<endl;
+		// cout<<SOIL_last_result()<<endl;
 		glFlush();
 		return;
 	}
@@ -29,7 +29,7 @@ void display()
 	if(displayInstruc){
 		glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1,1,1);
-		GLuint texture = SOIL_load_OGL_texture("instructions.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB);
+		GLuint texture = SOIL_load_OGL_texture("instructions.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y | SOIL_FLAG_POWER_OF_TWO);
 		glGenTextures(1, &texture);
 		glEnable(GL_TEXTURE_2D);
 
@@ -40,79 +40,31 @@ void display()
     		glTexCoord2i(0,1); glVertex2i(0, 744);
 		glEnd();
 		
-		cout<<SOIL_last_result()<<endl;
-		// SOIL_free_image_data(texture);
+		// cout<<SOIL_last_result()<<endl;
 		glDisable(GL_TEXTURE_2D);
 		glDeleteTextures(1,&texture);
+		//Load background only once for efficiency and speed
+		bt = SOIL_load_OGL_texture("buttons.png", SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y | SOIL_FLAG_POWER_OF_TWO);
+		glGenTextures(1, &bt);
+
 		glFlush();
 		return;
 	}
 
-	glDisable(GL_TEXTURE_2D);
-	//Menu bar
+	glEnable(GL_TEXTURE_2D);
+	
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(0.5,0.5,0.5);
+	//Background with buttons
+	glColor3f(1,1,1);
 	glBegin(GL_POLYGON);
-		glVertex2f(0,744);
-		glVertex2f(0,744-50);
-		glVertex2f(1314,744-50);
-		glVertex2f(1314,744);
+		glTexCoord2i(0,1);glVertex2f(0,744);
+		glTexCoord2i(0,0);glVertex2f(0,0);
+		glTexCoord2i(1,0);glVertex2f(1314,0);
+		glTexCoord2i(1,1);glVertex2f(1314,744);
 	glEnd();
-
-	//Create node button
-	glColor3f(0.6999,0.6999,0.68);
-	glBegin(GL_POLYGON);
-		glVertex2f(15,744-8);
-		glVertex2f(15,744-43);
-		glVertex2f(130,744-43);
-		glVertex2f(130,744-8);
-	glEnd();
-
-	glColor3f(0,0,0);
-	renderBitmapString(20,744-33,"Create Node",GLUT_BITMAP_HELVETICA_18);
-	//Add transition button
-	glColor3f(0.6999,0.6999,0.68);
-	glBegin(GL_POLYGON);
-		glVertex2f(140,744-43);
-		glVertex2f(140,744-8);
-		glVertex2f(280,744-8);
-		glVertex2f(280,744-43);
-	glEnd();
-
-	glColor3f(0,0,0);
-	renderBitmapString(150,744 - 33,"Add Transition",GLUT_BITMAP_HELVETICA_18);
-	//Test FSM button
-	glColor3f(0.6999,0.6999,0.68);
-	glBegin(GL_POLYGON);
-		glVertex2f(290,744-8);
-		glVertex2f(290,744-43);
-		glVertex2f(390,744-43);
-		glVertex2f(390,744-8);
-	glEnd();
-
-	glColor3f(0,0,0);
-	renderBitmapString(300,744-33,"Test FSM",GLUT_BITMAP_HELVETICA_18);
-	//Screenshot button
-	glColor3f(0.6999,0.6999,0.68);
-	glBegin(GL_POLYGON);
-		glVertex2f(1190,744-8);
-		glVertex2f(1190,744-43);
-		glVertex2f(1310,744-43);
-		glVertex2f(1310,744-8);
-	glEnd();
-
-	glColor3f(0,0,0);
-	renderBitmapString(1205,744-33,"Screenshot",GLUT_BITMAP_HELVETICA_18);
-
-	glColor3f(0.5,0.5,0.5);
-	glBegin(GL_POLYGON);
-		glVertex2f(0,0);
-		glVertex2f(1350,0);
-		glVertex2f(1350,50);
-		glVertex2f(0,50);
-	glEnd();
-	glColor3f(0,0,0);
+	glDisable(GL_TEXTURE_2D);
+	
+	glColor3f(0.9,0.9,0.9);
 	renderBitmapString(200,25,message,GLUT_BITMAP_HELVETICA_18);
 
 	//Display states
@@ -157,13 +109,11 @@ void display()
 			glEnd();
 		}
 	}
-	// cout<<"finalstate: ";
-	//To draw final states
+
 	for(int i=0;i<final_state_index.size();i++){
 		draw_hollow_circle(nodes[final_state_index[i]].x,nodes[final_state_index[i]].y,0,20);
 	}
 	if(flag!=-1){
-		// nodes[flag].color[0]=90.0/255.0;//Reset color
 		nodes[flag].color[0]=0;
 		nodes[flag].color[1]=142.0/255;
 		nodes[flag].color[2]=244.0/255.0;

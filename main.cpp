@@ -60,7 +60,7 @@ void mouseDetect(int button,int state,int x,int y)
 	cout<<"x = "<<x<<" y = "<<y<<endl;
 
 	//Screenshot button
-	if(x>=1240 && x<=1359 && y >=10 && y<=39){
+	if(x>=1133 && x<=1337 && y >=16 && y<=51 && state == GLUT_DOWN){
 		screenshot++;
 		// cout<<"Entered"<<endl;
 		// cout<<"Saved"<<endl;
@@ -152,7 +152,7 @@ void mouseDetect(int button,int state,int x,int y)
 				break;
 			}
 		}
-				// cout<<transition_input<<endl; @changed
+
 		if(transition_input == 0){
 			z=0;
 			tr_label_input = true;
@@ -162,7 +162,7 @@ void mouseDetect(int button,int state,int x,int y)
 				// break;
 	}
 	//Create node button clicked
-	if(x>21 && x<168 && y>15 && y<52){
+	if(x>46 && x<218 && y>18 && y<54){
 		message="Create Node Clicked";
 		createNode=true;
 		display();
@@ -183,14 +183,14 @@ void mouseDetect(int button,int state,int x,int y)
 	    }
 	}
 	//Add transition Clicked
-	if (x > 148 && x < 290 && y > 9 && y < 39) {
+	if (x > 256 && x < 458 && y > 17 && y < 52) {
 		message="Select the two states to add transition";
 		transition_input = 2;
 		display();
 	}
 
 	//Test FSM Clicked
-	if(x > 303 && x < 404 && y > 11 && y < 42){
+	if(x > 488 && x < 660 && y > 17 && y < 53){
 		if(startState==""||final_state_index.size()==0){
 		cout<<"returning"<<endl;
 		message="Start State or Final State Not Selected";
@@ -371,7 +371,8 @@ int main(int argc,char **argv)
 	glClearColor(1,1,1,1);
 	glutDisplayFunc(display);
 	glMatrixMode(GL_PROJECTION);
-	glOrtho(0,1314,0,744,-700,700);
+	// glOrtho(0,1314,0,744,-700,700);
+	gluOrtho2D(0,1314,0,744);
 	glutMouseFunc(mouseDetect);
 	glutKeyboardFunc(key);
 	start_state=glutCreateMenu(startMenu);
