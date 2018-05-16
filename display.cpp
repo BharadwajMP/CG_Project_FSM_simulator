@@ -66,7 +66,6 @@ void display()
 	
 	glColor3f(0.9,0.9,0.9);
 	renderBitmapString(200,25,message,GLUT_BITMAP_HELVETICA_18);
-
 	//Display states
 	vector <node> :: iterator i;
 	int z=-1;

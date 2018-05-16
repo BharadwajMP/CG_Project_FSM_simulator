@@ -58,7 +58,6 @@ int screenshot=0;
 void mouseDetect(int button,int state,int x,int y)
 {
 	cout<<"x = "<<x<<" y = "<<y<<endl;
-
 	//Screenshot button
 	if(x>=1133 && x<=1337 && y >=16 && y<=51 && state == GLUT_DOWN){
 		screenshot++;
@@ -170,9 +169,15 @@ void mouseDetect(int button,int state,int x,int y)
 	if(createNode){
 		message="Message Box";
 		if(button==GLUT_LEFT_BUTTON && state==GLUT_DOWN && !(x>21 && x<168 && y>15 && y<52)){
+			//Not in range.Don't draw node
+			if(y < 99 || y > 616){
+				message = "Click within the drawing area";
+				display();
+				return;
+			}
 			state_input  = true;
 			stateLabel = "";
-	    createNode=false;
+	    	createNode=false;
 			display();
 			//Convert mouse coordinates to window coordinates
 			GLdouble win[3];
